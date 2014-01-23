@@ -37,7 +37,6 @@ sub shoot {
     state $total_dt = 0;
     $total_dt += $dt;
     return unless ($total_dt >= $self->{cooling_time});
-    print "total_dt: $total_dt  cooling_time : $self->{cooling_time}\n";
     $total_dt -= $self->{cooling_time};
 
     push @{$self->{bullets}}, Game::Repliconz::Bullet->new( {
