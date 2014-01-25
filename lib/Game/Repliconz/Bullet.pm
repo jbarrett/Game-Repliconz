@@ -17,6 +17,7 @@ sub new {
     $opts->{v_y} = $opts->{target_y} - $opts->{y};
     $opts->{v_x} = $opts->{target_x} - $opts->{x};
     my $v_len = sqrt($opts->{v_y} ** 2 + $opts->{v_x} ** 2);
+    return if $v_len == 0;
     $opts->{v_y} /= $v_len;
     $opts->{v_x} /= $v_len;
 
