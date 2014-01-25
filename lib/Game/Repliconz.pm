@@ -13,6 +13,7 @@ use SDL::Event;
 use SDL::Video;
 
 use SDLx::App;
+use SDLx::Sprite;
 
 use Game::Repliconz::Guy;
 
@@ -49,6 +50,12 @@ sub _new_app {
     my ( $opts ) = @_;
     SDL::init(SDL_INIT_VIDEO);
     SDL::Events::enable_key_repeat( 100, 30 );
+
+    $opts->{cursor} = SDLx::Sprite->new(
+        image => "$opts->{working_dir}/assets/images/crosshair.png"
+    );
+    SDL::Mouse::show_cursor(SDL_DISABLE);
+
     $opts->{app} = SDLx::App->new(
         title => "Repliconz!",
         width => $opts->{w},
@@ -96,8 +103,8 @@ sub events {
     }
 
     if ($event->type == SDL_MOUSEMOTION) {
-        $self->{mouse}->{x} = $event->motion_x;
-        $self->{mouse}->{y} = $event->motion_y;
+        $self->{cursor}->x( ( $self->{mouse}->{x} = $event->motion_x ) - ($self->{cursor}->w / 2) );
+        $self->{cursor}->y( ( $self->{mouse}->{y} = $event->motion_y ) - ($self->{cursor}->h / 2) );
     }
 
     if ($event->type == SDL_MOUSEBUTTONDOWN && $event->button_button == SDL_BUTTON_LEFT) {
@@ -113,7 +120,8 @@ sub show {
     SDL::Video::fill_rect( $app, SDL::Rect->new(0, 0, $app->w, $app->h), 0 );
 
     $self->{hero}->draw($app);
-    for my $bullet (@{$self->{hero}->{bullets}}) { $bullet->draw($app) }
+    for my $bullet (@{$self->{hero}->{bullets}}) { $bullet->draw($app) };
+    $self->{cursor}->draw($app);
 
     $app->update();
 }
@@ -138,7 +146,7 @@ sub move {
 
     $self->{hero}->shoot( $dt, $self->{mouse}->{x}, $self->{mouse}->{y} ) if ($self->{mouse}->{firing});
 
-    for my $bullet (@{$self->{hero}->{bullets}}) { $bullet->move( $dt, $app ) }
+    for my $bullet (@{$self->{hero}->{bullets}}) { $bullet->move( $dt, $app ) };
 }
 
 sub play {
