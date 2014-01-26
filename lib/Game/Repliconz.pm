@@ -14,8 +14,10 @@ use SDL::Video;
 
 use SDLx::App;
 use SDLx::Sprite;
+use SDLx::Text;
 
 use Game::Repliconz::Guy;
+use Game::Repliconz::Baddie;
 
 use Carp;
 
@@ -60,7 +62,7 @@ sub _new_app {
         title => "Repliconz!",
         width => $opts->{w},
         height => $opts->{h},
-        delay => 20
+        delay => 15
     );
 }
 
@@ -121,9 +123,33 @@ sub show {
 
     $self->{hero}->draw($app);
     for my $bullet (@{$self->{hero}->{bullets}}) { $bullet->draw($app) };
+    for my $baddie (@{$self->{baddies}}) { $baddie->draw($app) };
     $self->{cursor}->draw($app);
 
+    SDLx::Text->new(
+        color   => [255, 255, 255],
+        text    => "LIVES : $self->{hero}->{lives}",
+        x       => 10,
+        y       => 10,
+    )->write_to($app);
+
     $app->update();
+}
+
+sub collisions {
+    my ( $self, $set1, $set2 ) = @_;
+    for my $element (@{$set1}) {
+        if (my $hit = $element->check_collision($set2)) {
+            if (ref $set2 eq 'ARRAY') {
+                $set2->[$hit - 1]->hit;
+                splice (@{$set2}, $hit - 1, 1) if (!$set2->[$hit - 1]->alive);
+            }
+            else {
+                $set2->hit;
+                undef $set2 if (!$set2->alive);
+            }
+        }
+    }
 }
 
 sub move {
@@ -131,6 +157,12 @@ sub move {
     my $v_x = 0;
     my $v_y = 0;
     my $bomb = 0;
+
+    $self->collisions($self->{hero}->{bullets}, $self->{baddies})
+        if ($self->{hero}->{bullets} && $self->{baddies});
+
+    $self->collisions($self->{baddies}, $self->{hero} )
+        if ($self->{baddies});
 
     for (grep { $self->{keys}->{$_} } keys %{$self->{keys}}) {
         when ($self->{controls}->{keyboard}->{u}) { $v_y += -1 }
@@ -141,12 +173,20 @@ sub move {
     }
 
     $self->{hero}->move( $v_x, $v_y, $dt, $app );
-
     $self->{hero}->self_destruct if ($bomb);
-
     $self->{hero}->shoot( $dt, $self->{mouse}->{x}, $self->{mouse}->{y} ) if ($self->{mouse}->{firing});
 
     for my $bullet (@{$self->{hero}->{bullets}}) { $bullet->move( $dt, $app ) };
+
+    while (scalar @{$self->{baddies}} < 20) {
+        push @{$self->{baddies}}, Game::Repliconz::Baddie->new({
+            field_width  => $self->{w},
+            field_height => $self->{h},
+        });
+    }
+    for my $baddie (@{$self->{baddies}}) {
+        $baddie->move( $self->{hero}->{x}, $self->{hero}->{y}, $dt, $app );
+    };
 }
 
 sub play {
