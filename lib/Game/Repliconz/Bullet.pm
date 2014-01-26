@@ -10,8 +10,8 @@ sub new {
 
     $opts->{x} = $opts->{guy}->{x} + ($opts->{guy}->{w} / 2);
     $opts->{y} = $opts->{guy}->{y} + ($opts->{guy}->{h} / 2);
-    $opts->{w} = 4;
-    $opts->{h} = 4;
+    $opts->{w} = 6;
+    $opts->{h} = 6;
 
     # normalise vector : guy position -> target position
     $opts->{v_y} = $opts->{target_y} - $opts->{y};
