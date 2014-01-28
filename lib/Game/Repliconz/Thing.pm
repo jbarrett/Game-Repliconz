@@ -67,6 +67,8 @@ sub shoot {
     return unless ($total_dt >= $self->{cooling_time});
     $total_dt -= $self->{cooling_time};
 
+    SDL::Mixer::Channels::play_channel( $self->{shoot_channel}, $self->{shoot_noise}, 0 ) if $self->{audio};
+
     @{$self->{bullets}} = grep {
         $_->alive && !$_->way_out_there;
     } @{$self->{bullets}};

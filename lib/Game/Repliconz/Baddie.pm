@@ -34,6 +34,15 @@ sub new {
     bless $opts, $class;
 }
 
+sub hit {
+    my ( $self ) = @_;
+    $self->SUPER::hit();
+
+    if (!$self->alive && $self->{audio}) {
+        SDL::Mixer::Channels::play_channel( $self->{die_channel}, $self->{die_noise}, 0 )
+    }
+}
+
 sub move {
     my ( $self, $target_x, $target_y, $dt, $app ) = @_;
 

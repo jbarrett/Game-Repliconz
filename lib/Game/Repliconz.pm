@@ -94,7 +94,7 @@ sub _init_audio {
 
 sub events {
     my ( $self, $event, $app ) = @_;
-    return $app->stop if $event->type == SDL_QUIT;
+    return $app->stop if ($event->type == SDL_QUIT or !$self->{hero}->alive);
 
     if ($event->type == SDL_KEYDOWN) {
         $self->{keys}->{$event->key_sym} = 1;
@@ -165,6 +165,9 @@ sub move {
         push @{$self->{baddies}}, Game::Repliconz::Baddie->new({
             field_width  => $self->{w},
             field_height => $self->{h},
+            die_noise  => $self->{samples}->{explosion},
+            die_channel => 2,
+            audio => $self->{audio},
         });
     }
     for my $baddie (@{$self->{baddies}}) {
@@ -177,6 +180,9 @@ sub play {
     $self->{hero} = Game::Repliconz::Guy->new( {
         field_width  => $self->{w},
         field_height => $self->{h},
+        shoot_noise  => $self->{samples}->{laser},
+        shoot_channel => 1,
+        audio => $self->{audio},
     } );
     @{$self->{baddies}} = ();
     @{$self->{superbaddies}} = ();
