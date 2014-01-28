@@ -51,7 +51,6 @@ sub play_sample {
 sub _new_app {
     my ( $opts ) = @_;
     SDL::init(SDL_INIT_VIDEO);
-    SDL::Events::enable_key_repeat( 100, 30 );
 
     $opts->{cursor} = SDLx::Sprite->new(
         image => "$opts->{working_dir}/assets/images/crosshair.png"
@@ -136,33 +135,17 @@ sub show {
     $app->update();
 }
 
-sub collisions {
-    my ( $self, $set1, $set2 ) = @_;
-    for my $element (@{$set1}) {
-        if (my $hit = $element->check_collision($set2)) {
-            if (ref $set2 eq 'ARRAY') {
-                $set2->[$hit - 1]->hit;
-                splice (@{$set2}, $hit - 1, 1) if (!$set2->[$hit - 1]->alive);
-            }
-            else {
-                $set2->hit;
-                undef $set2 if (!$set2->alive);
-            }
-        }
-    }
-}
-
 sub move {
     my ( $self, $dt, $app, $t ) = @_;
     my $v_x = 0;
     my $v_y = 0;
     my $bomb = 0;
 
-    $self->collisions($self->{hero}->{bullets}, $self->{baddies})
-        if ($self->{hero}->{bullets} && $self->{baddies});
-
-    $self->collisions($self->{baddies}, $self->{hero} )
-        if ($self->{baddies});
+    $self->{hero}->check_collides_with($self->{baddies});
+    for my $bullet (@{$self->{hero}->{bullets}}) {
+        $bullet->check_collides_with($self->{baddies});
+    }
+    @{$self->{baddies}} = grep { $_->alive } @{$self->{baddies}};
 
     for (grep { $self->{keys}->{$_} } keys %{$self->{keys}}) {
         when ($self->{controls}->{keyboard}->{u}) { $v_y += -1 }
@@ -178,7 +161,7 @@ sub move {
 
     for my $bullet (@{$self->{hero}->{bullets}}) { $bullet->move( $dt, $app ) };
 
-    while (scalar @{$self->{baddies}} < 20) {
+    while (scalar @{$self->{baddies}} < 10) {
         push @{$self->{baddies}}, Game::Repliconz::Baddie->new({
             field_width  => $self->{w},
             field_height => $self->{h},

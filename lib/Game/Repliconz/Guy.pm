@@ -22,8 +22,6 @@ sub new {
     $opts->{velocity} = 30;
     $opts->{cooling_time} = 1;
 
-    $opts->{max_bullets} = 20; # consider cooling time and bullet travel time
-
     bless $opts, $class;
 }
 
@@ -42,8 +40,11 @@ sub move {
 
     ($v_x, $v_y) = $self->constrain_velocity_xy($v_x, $v_y);
 
-    $self->{x} += $v_x * $self->{velocity} * $dt;
-    $self->{y} += $v_y * $self->{velocity} * $dt;
+    $self->dt = $dt;
+    $self->v_x = $v_x * $self->{velocity};
+    $self->v_y = $v_y * $self->{velocity};
+
+    $self->SUPER::move();
 
     ($self->{x} < 0) && ($self->{x} = 0);
     ($self->{x} > ($app->w - $self->{w})) && ($self->{x} = $app->w - $self->{w});

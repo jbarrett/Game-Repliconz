@@ -17,9 +17,6 @@ sub new {
     $opts->{w} = 15;
     $opts->{h} = 15;
 
-#    $opts->{x} = int(rand($opts->{field_width} - $opts->{w}));
-#    $opts->{y} = int(rand($opts->{field_height} - $opts->{h}));
-
     $opts->{x} = $opts->{y} = rand;
     for ((qw/t l b r/)[int(rand(4))]) {
         when ('t') { $opts->{x} *= $opts->{field_width} ; $opts->{y} = -$opts->{h} }
@@ -45,8 +42,11 @@ sub move {
 
     ($v_x, $v_y) = $self->constrain_velocity_xy($v_x, $v_y);
 
-    $self->{x} += $v_x * $self->{velocity} * $dt;
-    $self->{y} += $v_y * $self->{velocity} * $dt;
+    $self->dt = $dt;
+    $self->v_x = $v_x * $self->{velocity};
+    $self->v_y = $v_y * $self->{velocity};
+
+    $self->SUPER::move();
 
     ($self->{x} > 0 || $self->{x} < ($app->w - $self->{w})) &&
     ($self->{y} > 0 || $self->{y} < ($app->h - $self->{h})) &&
