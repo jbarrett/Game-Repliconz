@@ -4,9 +4,9 @@ Not a game yet... but getting there.
 
 The story so far...
 
-[![Repliconz, phaze one](http://img.youtube.com/vi/I38kMAqzevg/0.jpg)](http://www.youtube.com/watch?v=I38kMAqzevg)
+[![Repliconz, phaze one](http://img.youtube.com/vi/0I2OOBPkJp8/0.jpg)](http://www.youtube.com/watch?v=0I2OOBPkJp8)
 
-[Youtube link](http://www.youtube.com/watch?v=I38kMAqzevg)
+[Youtube link](http://www.youtube.com/watch?v=0I2OOBPkJp8)
 
 Dev log:
 
@@ -14,4 +14,5 @@ Dev log:
 
 [Repliconz - dev log 1, Enemies, Collision Detection](http://fuzzix.org/post/35/)
 
+[Repliconz - dev log 2, Collisions Revisited, Sound ](http://fuzzix.org/post/36/)
 
