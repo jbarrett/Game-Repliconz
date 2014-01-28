@@ -12,7 +12,10 @@ use Game::Repliconz::Bullet;
 use Carp;
 
 use Class::XSAccessor {
-    lvalue_accessors   => [ 'last_x', 'last_y', 'last_dt', 'x', 'y', 'w', 'h', 'v_x', 'v_y', 'dt' ],
+    lvalue_accessors   => [
+        'last_x', 'last_y', 'last_dt', 'last_v_x', 'last_v_y',
+        'x', 'y', 'w', 'h', 'v_x', 'v_y', 'dt'
+    ],
 };
 
 use Collision::2D ':all';
@@ -22,6 +25,8 @@ sub move {
     $self->last_x = $self->x;
     $self->last_y = $self->y;
     $self->last_dt = $self->dt;
+    $self->last_v_x = $self->v_x;
+    $self->last_v_y = $self->v_y;
     $self->x += $self->v_x * $self->dt;
     $self->y += $self->v_y * $self->dt;
 }
@@ -34,8 +39,8 @@ sub collision {
         y => $_->last_y,
         h => $_->h,
         w => $_->w,
-        xv => $_->v_x,
-        yv => $_->v_y,
+        xv => $_->last_v_x,
+        yv => $_->last_v_y,
     } ) } ( $self, $thing );
     return dynamic_collision ($rect[0], $rect[1], interval => $self->last_dt);
 }
