@@ -86,9 +86,9 @@ sub _init_audio {
         laser
         explosion
     / } = (
-        SDL::Mixer::Samples::load_WAV("$opts->{working_dir}/sound/bonus_sweeps.wav"),
-        SDL::Mixer::Samples::load_WAV("$opts->{working_dir}/sound/laser.wav"),
-        SDL::Mixer::Samples::load_WAV("$opts->{working_dir}/sound/explosion.wav"),
+        SDL::Mixer::Samples::load_WAV("$opts->{working_dir}/assets/sound/bonus_sweeps.wav"),
+        SDL::Mixer::Samples::load_WAV("$opts->{working_dir}/assets/sound/laser.wav"),
+        SDL::Mixer::Samples::load_WAV("$opts->{working_dir}/assets/sound/explosion.wav"),
     )
 }
 
